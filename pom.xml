@@ -12,6 +12,8 @@
         <module>distribution_crowd_1_common</module>
         <module>distribution_crowd_2_registry_center</module>
         <module>distribution_crowd_3_database_provider</module>
+        <module>distribution_crowd_4_redis_provider</module>
+        <module>distribution_crowd_5_member_manager</module>
     </modules>
 
     <properties>

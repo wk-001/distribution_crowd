@@ -2,14 +2,14 @@ package com.wk.crowd;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-@EnableEurekaServer
+@EnableDiscoveryClient
 @SpringBootApplication
-public class CrowdMainType {
+public class MemberManager {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CrowdMainType.class,args);
+		SpringApplication.run(MemberManager.class,args);
 	}
 
 }
