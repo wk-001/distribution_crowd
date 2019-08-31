@@ -10,3 +10,9 @@ eureka:
       defaultZone: http://localhost:1000/eureka/
   instance:
     prefer-ip-address: true
+
+
+crowd:
+  short:
+    message:
+      appCode: 52af38ee6a48458bb3e140682716e79b

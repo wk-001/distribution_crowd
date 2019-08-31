@@ -9,7 +9,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 public class RedisProvider {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RedisProvider.class,args);
+		SpringApplication.run(RedisProvider.class, args);
 	}
 
 }

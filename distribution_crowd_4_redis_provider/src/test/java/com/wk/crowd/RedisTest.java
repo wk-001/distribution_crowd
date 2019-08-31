@@ -30,7 +30,7 @@ public class RedisTest {
 	@Test
 	public void stringRedisTest(){
 		ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-		ops.set("k2","v2");
+//		ops.set("k2","v2");
 		System.out.println("ops = " + ops.get("k2"));
 	}
 }
