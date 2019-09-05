@@ -1,6 +1,6 @@
 package com.wk.crowd.controller;
 
-import com.wk.crowd.pojo.MemberPO;
+import com.wk.crowd.pojo.po.MemberPO;
 import com.wk.crowd.pojo.ResultEntity;
 import com.wk.crowd.service.MemberPOService;
 import com.wk.crowd.util.CrowdConstant;
@@ -36,6 +36,17 @@ public class MemberController {
 		try {
 			memberPOService.saveMemberPO(memberPO);
 			return ResultEntity.successNoData();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResultEntity.failed(e.getMessage());
+		}
+	}
+
+	@RequestMapping("/retrieve/member/by/login/acct")
+	public ResultEntity<MemberPO> retrieveMemberByLoginAcct(@RequestParam("loginAcct") String loginAcct){
+		try {
+			MemberPO memberPO = memberPOService.getMemberByAcct(loginAcct);
+			return ResultEntity.successWithData(memberPO);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResultEntity.failed(e.getMessage());

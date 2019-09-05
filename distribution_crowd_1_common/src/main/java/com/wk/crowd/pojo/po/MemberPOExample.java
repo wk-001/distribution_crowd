@@ -1,4 +1,4 @@
-package com.wk.crowd.pojo;
+package com.wk.crowd.pojo.po;
 
 import java.util.ArrayList;
 import java.util.List;

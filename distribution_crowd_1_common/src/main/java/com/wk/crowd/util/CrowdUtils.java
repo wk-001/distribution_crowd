@@ -6,6 +6,7 @@ import org.apache.http.util.EntityUtils;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class CrowdUtils {
 	
@@ -168,6 +169,19 @@ public class CrowdUtils {
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
 		}
+	}
+
+	/**
+	 * 生成用户登录成功后使用的token
+	 * @return
+	 */
+	public static String generateToken() {
+		return CrowdConstant.REDIS_MEMBER_SING_TOKEN_PREFIX + UUID.randomUUID().toString().replaceAll("-", "");
+	}
+
+	//传入Redis前缀，加上UUID,生成唯一RedisKey
+	public static String generateRedisKey(String redisKey){
+		return redisKey + UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 }

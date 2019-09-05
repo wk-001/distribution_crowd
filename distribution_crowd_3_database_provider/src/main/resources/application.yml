@@ -19,3 +19,8 @@ eureka:
       defaultZone: http://localhost:1000/eureka/
   instance:
     prefer-ip-address: true
+
+logging:
+  level:
+    com.wk.crowd.mapper: trace
+

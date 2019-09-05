@@ -1,4 +1,4 @@
-package com.wk.crowd.pojo;
+package com.wk.crowd.pojo.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

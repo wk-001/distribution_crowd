@@ -1,7 +1,7 @@
 package com.wk.crowd.mapper;
 
-import com.wk.crowd.pojo.MemberPO;
-import com.wk.crowd.pojo.MemberPOExample;
+import com.wk.crowd.pojo.po.MemberPO;
+import com.wk.crowd.pojo.po.MemberPOExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

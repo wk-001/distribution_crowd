@@ -2,8 +2,9 @@ package com.wk.crowd.controller;
 
 import com.wk.crowd.api.DataBaseOperationRemoteService;
 import com.wk.crowd.api.RedisOperationRemoteService;
-import com.wk.crowd.pojo.MemberPO;
-import com.wk.crowd.pojo.MemberVO;
+import com.wk.crowd.pojo.po.MemberPO;
+import com.wk.crowd.pojo.vo.MemberSignSuccessVO;
+import com.wk.crowd.pojo.vo.MemberVO;
 import com.wk.crowd.pojo.ResultEntity;
 import com.wk.crowd.util.CrowdConstant;
 import com.wk.crowd.util.CrowdUtils;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Objects;
 
 @RestController
+@RequestMapping("member/manager")
 public class MemberController {
 
 	@Autowired
@@ -34,13 +36,76 @@ public class MemberController {
 	@Value("${crowd.short.message.appCode}")
 	private String appcode;
 
-	@RequestMapping("member/manager/register")
+	/**
+	 * 退出，根据key删除Redis中对应的value
+	 * @param token
+	 * @return
+	 */
+	@RequestMapping("logout")
+	public ResultEntity<String> logout(@RequestParam("token") String token){
+		return redisRemoteService.removeByKey(token);
+	}
+
+	/**
+	 * 登录
+	 * @param loginAcct
+	 * @param userPwd
+	 * @return
+	 */
+	@RequestMapping("login")
+	public ResultEntity<MemberSignSuccessVO> login(
+			@RequestParam("loginAcct") String loginAcct,
+			@RequestParam("userPwd") String userPwd){
+		//根据登录账号从数据库查询MemberPO对象
+		ResultEntity<MemberPO> resultEntity = databasesRemoteService.retrieveMemberByLoginAcct(loginAcct);
+		if(ResultEntity.FAILED.equals(resultEntity.getResult())){
+			return ResultEntity.failed(resultEntity.getMessage());
+		}
+
+		//获取MemberPO对象
+		MemberPO memberPO = resultEntity.getData();
+		//判断MemberPO对象是否为空
+		if (memberPO == null) {
+			return ResultEntity.failed(CrowdConstant.MESSAGE_LOGIN_FAILED);
+		}
+		//获取从数据库中查询到的密码
+		String userpswdByDataBase = memberPO.getUserpswd();
+
+		//比较数据库加密后的密码和前台传入的密码
+		boolean matches = passwordEncoder.matches(userPwd, userpswdByDataBase);
+		if (!matches) {
+			return ResultEntity.failed(CrowdConstant.MESSAGE_LOGIN_FAILED);
+		}
+
+		//对比成功，生成token
+		String token = CrowdUtils.generateRedisKey(CrowdConstant.REDIS_MEMBER_SING_TOKEN_PREFIX);
+		//token作为key，userid作为value，过期时间30分钟存入Redis
+		String id = memberPO.getId()+"";
+		ResultEntity<String> resultEntitySaveToken = redisRemoteService.saveNormalStringKeyValue(token, id, 30);
+		if(ResultEntity.FAILED.equals(resultEntitySaveToken.getResult())){
+			return ResultEntity.failed(resultEntitySaveToken.getMessage());
+		}
+		//账号密码验证成功，封装对象
+		MemberSignSuccessVO signSuccessVO = new MemberSignSuccessVO();
+		//将memberPO复制到signSuccessVO对象中
+		BeanUtils.copyProperties(memberPO,signSuccessVO);
+		signSuccessVO.setToken(token);
+		return ResultEntity.successWithData(signSuccessVO);
+	}
+
+	/**
+	 * 注册
+	 * @param memberVO
+	 * @return
+	 */
+	@RequestMapping("register")
 	public ResultEntity<String> register(@RequestBody() MemberVO memberVO){
 		//检查验证码是否有效
 		String randomCode = memberVO.getRandomCode();
 		if(!CrowdUtils.strEffectiveCheck(randomCode)){
 			return ResultEntity.failed(CrowdConstant.MESSAGE_CODE_INVALID);
 		}
+
 		//检查手机号是否有效
 		String phoneNum = memberVO.getPhoneNum();
 		if(!CrowdUtils.strEffectiveCheck(phoneNum)){
@@ -49,16 +114,19 @@ public class MemberController {
 
 		//拼接验证码的key
 		String codeKey = CrowdConstant.REDIS_RANDOM_CODE_PREFIX+phoneNum;
+
 		//远程调用Redis_provider的方法获取key对应的值
 		ResultEntity<String> resultEntity = redisRemoteService.retrieveStringValueByStringKey(codeKey);
 		if(ResultEntity.FAILED.equals(resultEntity.getResult())){
 			return resultEntity;
 		}
+
 		//获取Redis中key对应的value
 		String randomCodeRedis = resultEntity.getData();
 		if(!CrowdUtils.strEffectiveCheck(randomCodeRedis)){
 			return ResultEntity.failed(CrowdConstant.MESSAGE_CODE_NOT_EXISTS);
 		}
+
 		//判断前台传入的值和Redis中的值是否相等
 		if(!Objects.equals(randomCode,randomCodeRedis)){
 			return ResultEntity.failed(CrowdConstant.MESSAGE_CODE_NOT_MATCH);
@@ -76,6 +144,7 @@ public class MemberController {
 		if(ResultEntity.FAILED.equals(integerResultEntity.getResult())){
 			return ResultEntity.failed(integerResultEntity.getMessage());
 		}
+
 		Integer count = integerResultEntity.getData();
 		//账号被占用，返回失败信息
 		if(count>0){
@@ -94,7 +163,12 @@ public class MemberController {
 		return databasesRemoteService.saveMemberRemote(memberPO);
 	}
 
-	@RequestMapping("member/manager/send/code")
+	/**
+	 * 发送短信验证码
+	 * @param phoneNum
+	 * @return
+	 */
+	@RequestMapping("send/code")
 	public ResultEntity<String> sendCode(@RequestParam("phoneNum")String phoneNum){
 		//验证手机号
 		if(!CrowdUtils.strEffectiveCheck(phoneNum)){

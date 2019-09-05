@@ -7,6 +7,8 @@ public class CrowdConstant {
 
 	//验证码短信前缀
 	public static final String REDIS_RANDOM_CODE_PREFIX = "RANDOM_CODE_";
+	public static final String REDIS_MEMBER_SING_TOKEN_PREFIX = "SIGNED_MEMBER_";
+	public static final String REDIS_PROJECT_TEMP_TOKEN_PREFIX = "PROJECT_TEMP_TOKEN_";
 
 	public static final String ATTR_NAME_MESSAGE = "MESSAGE";
 	public static final String ATTR_NAME_LOGIN_ADMIN = "LOGIN-ADMIN";

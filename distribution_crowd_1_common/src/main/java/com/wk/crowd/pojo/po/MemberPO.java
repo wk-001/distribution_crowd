@@ -1,4 +1,4 @@
-package com.wk.crowd.pojo;
+package com.wk.crowd.pojo.po;
 
 public class MemberPO {
     private Integer id;
