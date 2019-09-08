@@ -1,6 +1,9 @@
 package com.wk.crowd.service.impl;
 
+import com.wk.crowd.mapper.MemberLaunchInfoPOMapper;
 import com.wk.crowd.mapper.MemberPOMapper;
+import com.wk.crowd.pojo.po.MemberLaunchInfoPO;
+import com.wk.crowd.pojo.po.MemberLaunchInfoPOExample;
 import com.wk.crowd.pojo.po.MemberPO;
 import com.wk.crowd.pojo.po.MemberPOExample;
 import com.wk.crowd.service.MemberPOService;
@@ -19,10 +22,13 @@ public class MemberPOServiceImpl implements MemberPOService {
 	@Autowired
 	private MemberPOMapper memberPOMapper;
 
+	@Autowired
+	private MemberLaunchInfoPOMapper memberLaunchInfoPOMapper;
+
 	@Override
-	public int getLoginAcct(String loginAcct) {
+	public int getLoginAcct(String loginacct) {
 		MemberPOExample example = new MemberPOExample();
-		example.createCriteria().andLoginacctEqualTo(loginAcct);
+		example.createCriteria().andLoginacctEqualTo(loginacct);
 		return memberPOMapper.countByExample(example);
 	}
 
@@ -34,13 +40,25 @@ public class MemberPOServiceImpl implements MemberPOService {
 	}
 
 	@Override
-	public MemberPO getMemberByAcct(String loginAcct) {
+	public MemberPO getMemberByAcct(String loginacct) {
 		MemberPOExample example = new MemberPOExample();
-		example.createCriteria().andLoginacctEqualTo(loginAcct);
+		example.createCriteria().andLoginacctEqualTo(loginacct);
 		List<MemberPO> list = memberPOMapper.selectByExample(example);
 		if(CrowdUtils.collectionEffectiveCheck(list)){
 			return list.get(0);
 		}
 		return null;
+	}
+
+	@Override
+	public MemberLaunchInfoPO getLaunchInfoByMemberId(String memberid) {
+		MemberLaunchInfoPOExample example = new MemberLaunchInfoPOExample();
+		example.createCriteria().andMemberidEqualTo(Integer.parseInt(memberid));
+		List<MemberLaunchInfoPO> memberLaunchInfoPO = memberLaunchInfoPOMapper.selectByExample(example);
+		if (CrowdUtils.collectionEffectiveCheck(memberLaunchInfoPO)) {
+			return memberLaunchInfoPO.get(0);
+		}else {
+			return null;
+		}
 	}
 }

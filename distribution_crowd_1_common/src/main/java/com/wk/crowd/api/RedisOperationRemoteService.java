@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * redis操作远程公共接口
  */
-@FeignClient(value="redis-provider")
+@FeignClient(value="redis-provider")	//调用注册到eureka中的微服务名称
 public interface RedisOperationRemoteService {
 
 	/**

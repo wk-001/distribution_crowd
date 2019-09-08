@@ -10,7 +10,6 @@ import com.wk.crowd.pojo.vo.ReturnVO;
 import com.wk.crowd.pojo.vo.TokenVO;
 import com.wk.crowd.util.CrowdConstant;
 import com.wk.crowd.util.CrowdUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("project/manager")
 public class ProjectController {
 
 	@Autowired
@@ -35,7 +33,7 @@ public class ProjectController {
 	 * @param tokenVO
 	 * @return
 	 */
-	@RequestMapping("save/hole/project")
+	@RequestMapping("project/manager/save/hole/project")
 	public ResultEntity<String> saveWholeProject(@RequestBody TokenVO tokenVO){
 		//检查是否登录(Redis中memberSignToken对应的key是否有值)
 		String memberSignToken = tokenVO.getMemberSignToken();
@@ -58,6 +56,7 @@ public class ProjectController {
 		return redisService.removeByKey(projectTempToken);
 	}
 
+	//工具类;检查用户令牌是否登录、获取项目令牌，从Redis中取出projectVO对象
 	public ResultEntity<ProjectVO> getProjectVO(TokenVO tokenVO){
 		//检查是否登录(Redis中memberSignToken对应的key是否有值)
 		String memberSignToken = tokenVO.getMemberSignToken();
@@ -83,7 +82,8 @@ public class ProjectController {
 		return ResultEntity.successWithData(projectVOByRedis);
 	}
 
-	@RequestMapping("save/confirm/info")
+	//将易付宝账号和身份证号存入项目对象
+	@RequestMapping("project/manager/save/confirm/info")
 	public ResultEntity<String> saveConfirmInfo(@RequestBody MemberConfirmInfoVO memberConfirmInfoVO){
 		ProjectVO projectVOByRedis = getProjectVO(memberConfirmInfoVO).getData();
 		String projectToken = projectVOByRedis.getProjectTempToken();
@@ -98,7 +98,7 @@ public class ProjectController {
 	/**
 	 * 保存回报信息
 	 */
-	@RequestMapping("save/return/info")
+	@RequestMapping("project/manager/save/return/info")
 	public ResultEntity<String> saveReturnInfo(@RequestBody ReturnVO returnVO){
 
 		ProjectVO projectVOByRedis = getProjectVO(returnVO).getData();
@@ -123,16 +123,16 @@ public class ProjectController {
 	/**
 	 * 保存项目信息
 	 */
-	@RequestMapping("save/project/info")
+	@RequestMapping("project/manager/save/project/info")
 	public ResultEntity<String> saveProjectInfo(@RequestBody ProjectVO projectVO){
-		/*//检查是否登录(Redis中memberSignToken对应的key是否有值)
+		//检查是否登录(Redis中memberSignToken对应的key是否有值)
 		String memberSignToken = projectVO.getMemberSignToken();
 		ResultEntity<String> resultEntity = redisService.retrieveStringValueByStringKey(memberSignToken);
 		if(ResultEntity.FAILED.equals(resultEntity.getResult())){
 			return ResultEntity.failed(resultEntity.getMessage());
 		}
 
-		//从前台传入的对象中获取project令牌
+		/*//从前台传入的对象中获取project令牌
 		String projectToken = projectVO.getProjectTempToken();
 
 		//redis中查询projectVo对象
@@ -147,18 +147,18 @@ public class ProjectController {
 		//json转对象
 		ProjectVO projectVOByRedis = JSON.parseObject(projectVoJson, ProjectVO.class);
 
-		BeanUtils.copyProperties会把null也复制到新对象，所以要把Redis中对象的值设置到新对象中
+		//BeanUtils.copyProperties会把null也复制到新对象，所以要把Redis中对象的值设置到新对象中
 		projectVO.setHeaderPicturePath(projectVOByRedis.getHeaderPicturePath());
 		projectVO.setDetailPicturePathList(projectVOByRedis.getDetailPicturePathList());
-		将前台传过来带有数据的对象复制到从Redis中取出来带有图片信息的对象中,Redis包含所有的数据*/
+		//将前台传过来带有数据的对象复制到从Redis中取出来带有图片信息的对象中,Redis包含所有的数据*/
 
+		/*从Redis中取出项目初始化的内容
 		ProjectVO projectVOByRedis = getProjectVO(projectVO).getData();
-		String projectToken = projectVOByRedis.getProjectTempToken();
-
-		BeanUtils.copyProperties(projectVO,projectVOByRedis);
+		BeanUtils.copyProperties(projectVO,projectVOByRedis);*/
 
 		//将存入大图路径的对象重新转成json存入redis
-		String projectVoStr = JSON.toJSONString(projectVOByRedis);
+		String projectToken = projectVO.getProjectTempToken();
+		String projectVoStr = JSON.toJSONString(projectVO);
 		return redisService.saveNormalStringKeyValue(projectToken, projectVoStr, -1);
 	}
 
@@ -168,7 +168,7 @@ public class ProjectController {
 	 * @param projectToken		项目令牌
 	 * @param detailPicturePathList		详细信息图片存储在oss的路径
 	 * @return
-
+	 *
 	@RequestMapping("save/detail/picture/list/path")
 	public ResultEntity<String> saveDetailPictureListPath(
 			@RequestParam("memberSignToken") String memberSignToken,
@@ -242,7 +242,7 @@ public class ProjectController {
 
 
 	/*项目创建后再Redis中初始化，创建临时对象存放项目信息*/
-	@RequestMapping("initCreation")
+	@RequestMapping("project/manager/initCreation")
 	public ResultEntity<ProjectVO> initCreation(@RequestParam("memberSignToken")String memberSignToken){
 		//检查是否登录(Redis中memberSignToken对应的key是否有值)
 		ResultEntity<String> resultEntity = redisService.retrieveStringValueByStringKey(memberSignToken);

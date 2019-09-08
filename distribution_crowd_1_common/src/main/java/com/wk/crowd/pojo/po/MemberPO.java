@@ -1,6 +1,8 @@
 package com.wk.crowd.pojo.po;
 
-public class MemberPO {
+import java.io.Serializable;
+
+public class MemberPO implements Serializable {
     private Integer id;
 
     private String loginacct;

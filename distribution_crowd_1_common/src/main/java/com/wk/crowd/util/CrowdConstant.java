@@ -12,7 +12,9 @@ public class CrowdConstant {
 
 	public static final String ATTR_NAME_MESSAGE = "MESSAGE";
 	public static final String ATTR_NAME_LOGIN_ADMIN = "LOGIN-ADMIN";
+	public static final String ATTR_NAME_LOGIN_MEMBER = "LOGIN-MEMBER";
 	public static final String ATTR_NAME_PAGE_INFO = "PAGE-INFO";
+	public static final String ATTR_NAME_INIT_PROJECT = "INIT-PROJECT";
 	
 	public static final String MESSAGE_LOGIN_FAILED = "登录账号或密码不正确！请核对后再登录！";
 	public static final String MESSAGE_CODE_INVALID = "明文不是有效字符串，请核对后再操作！";
@@ -27,6 +29,8 @@ public class CrowdConstant {
 	public static final String MESSAGE_LOGINACCT_INVALID = "账号无效";
 	public static final String MESSAGE_CODE_NOT_MATCH = "验证码不匹配";
 	public static final String MESSAGE_CODE_NOT_EXISTS = "验证码不存在或已过期";
+	public static final String MESSAGE_UPLOAD_FILE_EMPTY = "未检测到上传的文件";
+	public static final String MESSAGE_PROJECTVO_DENIED = "未检测到项目数据";
 
 	static {
 		EXCEPTION_MESSAGE_MAP.put("java.lang.ArithmeticException", "系统在进行数学运算时发生错误");

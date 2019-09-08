@@ -15,6 +15,7 @@
         <module>distribution_crowd_4_redis_provider</module>
         <module>distribution_crowd_5_member_manager</module>
         <module>distribution_crowd_6_project_manager</module>
+        <module>distribution_crowd_7_webui</module>
     </modules>
 
     <properties>

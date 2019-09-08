@@ -1,10 +1,7 @@
 package com.wk.crowd.service.impl;
 
 import com.wk.crowd.mapper.*;
-import com.wk.crowd.pojo.po.MemberConfirmInfoPO;
-import com.wk.crowd.pojo.po.MemberLaunchInfoPO;
-import com.wk.crowd.pojo.po.ProjectPO;
-import com.wk.crowd.pojo.po.ReturnPO;
+import com.wk.crowd.pojo.po.*;
 import com.wk.crowd.pojo.vo.MemberConfirmInfoVO;
 import com.wk.crowd.pojo.vo.MemberLaunchInfoVO;
 import com.wk.crowd.pojo.vo.ProjectVO;
@@ -48,11 +45,11 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	@Transactional(readOnly = false,propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
-	public void saveProject(ProjectVO projectVO,String memberId) {
+	public void saveProject(ProjectVO projectVO,String memberid) {
 		//1.保存ProjectPO
 		ProjectPO projectPO = new ProjectPO();
 		BeanUtils.copyProperties(projectVO,projectPO);
-		projectPO.setMemberid(Integer.parseInt(memberId));
+		projectPO.setMemberid(Integer.parseInt(memberid));
 		//mapper文件insert方法需要设置"useGeneratedKeys="true" keyProperty="主键属性名""
 		projectPOMapper.insertSelective(projectPO);
 		//2.获取保存ProjectPO后的自增主键
@@ -75,9 +72,15 @@ public class ProjectServiceImpl implements ProjectService {
 		//6.保存MemberLaunchInfoPO
 		MemberLaunchInfoVO memberLaunchInfoVO = projectVO.getMemberLaunchInfoVO();
 		if (memberLaunchInfoVO != null) {
+			//删除旧的发起人信息
+			MemberLaunchInfoPOExample example = new MemberLaunchInfoPOExample();
+			example.createCriteria().andMemberidEqualTo(Integer.parseInt(memberid));
+			memberLaunchInfoPOMapper.deleteByExample(example);
+
+			//添加新的发起人信息
 			MemberLaunchInfoPO memberLaunchInfoPO = new MemberLaunchInfoPO();
 			BeanUtils.copyProperties(memberLaunchInfoVO,memberLaunchInfoPO);
-			memberLaunchInfoPO.setMemberid(Integer.parseInt(memberId));
+			memberLaunchInfoPO.setMemberid(Integer.parseInt(memberid));
 			memberLaunchInfoPOMapper.insertSelective(memberLaunchInfoPO);
 		}
 		//7.根据ReturnVO的List保存ReturnPO
@@ -96,7 +99,7 @@ public class ProjectServiceImpl implements ProjectService {
 		MemberConfirmInfoVO memberConfirmInfoVO = projectVO.getMemberConfirmInfoVO();
 		if (memberConfirmInfoVO != null) {
 			MemberConfirmInfoPO memberConfirmInfoPO = new MemberConfirmInfoPO(null,
-					Integer.parseInt(memberId),
+					Integer.parseInt(memberid),
 					memberConfirmInfoVO.getPaynum(),
 					memberConfirmInfoVO.getCardnum());
 			memberConfirmInfoPOMapper.insertSelective(memberConfirmInfoPO);

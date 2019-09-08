@@ -1,0 +1,37 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: webui
+  redis:
+    host: 192.168.0.103
+    jedis:
+      pool:
+        max-idle: 100
+  session:
+    store-type: redis   #指定SpringSession存储方式
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false    #取消页面缓存，方便开发
+
+eureka:
+  client:
+    register-with-eureka: false   #页面由用户操作，不用注册到eureka
+    service-url:
+      defaultZone: http://localhost:1000/eureka/
+  instance:
+    prefer-ip-address: true
+
+#oss服务器父文件夹
+oss.project.parent.folder: crowd
+#地域节点
+oss.endpoint: http://oss-cn-beijing.aliyuncs.com
+#开通服务器时的秘钥
+oss.accessKeyId: LTAIVuCVR9e90nZv
+oss.accessKeySecret: zDZVRxpX3fyIzbR3T1ZR5gcLS0FTuX
+#存储空间的bucketName
+oss.bucketName: spring-cloud-crowd
+#Bucket 域名
+oss.bucket.domain: http://spring-cloud-crowd.oss-cn-beijing.aliyuncs.com

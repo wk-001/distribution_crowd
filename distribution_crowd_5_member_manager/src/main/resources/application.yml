@@ -16,3 +16,9 @@ crowd:
   short:
     message:
       appCode: 52af38ee6a48458bb3e140682716e79b
+
+#解决错误 com.netflix.client.ClientException: Load balancer does not have available server for client:panfeng-item-service
+#开启eureka负载均衡策略
+ribbon:
+  eureka:
+    enabled: true

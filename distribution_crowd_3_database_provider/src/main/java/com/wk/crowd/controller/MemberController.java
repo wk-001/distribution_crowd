@@ -1,7 +1,8 @@
 package com.wk.crowd.controller;
 
-import com.wk.crowd.pojo.po.MemberPO;
 import com.wk.crowd.pojo.ResultEntity;
+import com.wk.crowd.pojo.po.MemberLaunchInfoPO;
+import com.wk.crowd.pojo.po.MemberPO;
 import com.wk.crowd.service.MemberPOService;
 import com.wk.crowd.util.CrowdConstant;
 import com.wk.crowd.util.CrowdUtils;
@@ -17,13 +18,20 @@ public class MemberController {
 	@Autowired
 	private MemberPOService memberPOService;
 
+	//根据memberid获取项目发起人信息
+	@RequestMapping("get/member/launch/info/po")
+	public ResultEntity<MemberLaunchInfoPO> getLaunchInfoByMemberId(@RequestParam("memberid") String memberid){
+		MemberLaunchInfoPO memberLaunchInfoPO = memberPOService.getLaunchInfoByMemberId(memberid);
+		return ResultEntity.successWithData(memberLaunchInfoPO);
+	}
+
 	@RequestMapping("/retrieve/login/acct/count")
-	public ResultEntity<Integer> retrieveLoginAcctCount(@RequestParam("loginAcct") String loginAcct){
-		if(!CrowdUtils.strEffectiveCheck(loginAcct)){
+	public ResultEntity<Integer> retrieveLoginAcctCount(@RequestParam("loginacct") String loginacct){
+		if(!CrowdUtils.strEffectiveCheck(loginacct)){
 			return ResultEntity.failed(CrowdConstant.MESSAGE_LOGINACCT_INVALID);
 		}
 		try {
-			int count = memberPOService.getLoginAcct(loginAcct);
+			int count = memberPOService.getLoginAcct(loginacct);
 			return ResultEntity.successWithData(count);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -43,9 +51,9 @@ public class MemberController {
 	}
 
 	@RequestMapping("/retrieve/member/by/login/acct")
-	public ResultEntity<MemberPO> retrieveMemberByLoginAcct(@RequestParam("loginAcct") String loginAcct){
+	public ResultEntity<MemberPO> retrieveMemberByLoginAcct(@RequestParam("loginacct") String loginacct){
 		try {
-			MemberPO memberPO = memberPOService.getMemberByAcct(loginAcct);
+			MemberPO memberPO = memberPOService.getMemberByAcct(loginacct);
 			return ResultEntity.successWithData(memberPO);
 		} catch (Exception e) {
 			e.printStackTrace();
