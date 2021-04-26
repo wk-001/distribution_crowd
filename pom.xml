@@ -27,7 +27,7 @@
         <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
 
         <!-- 公共依赖 -->
-        <commons-io.version>2.5</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <commons-lang3.version>3.5</commons-lang3.version>
         <commons-codec.version>1.10</commons-codec.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
